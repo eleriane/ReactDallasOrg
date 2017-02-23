@@ -1,0 +1,32 @@
+language: go
+
+go:
+  - 1.8
+
+compiler:
+  - clang
+  - gcc
+  
+services:
+  - docker
+
+install:
+  - wget http://www.musl-libc.org/releases/musl-1.1.10.tar.gz
+  - tar -xvf musl-1.1.10.tar.gz
+  - cd musl-1.1.10
+  - ./configure
+  - make
+  - sudo make install
+  - cd ..
+  - go get gopkg.in/kataras/iris.v6
+
+script:
+  - go clean
+  - CC=/usr/local/musl/bin/musl-gcc go build --ldflags '-linkmode external -extldflags "-static"'
+  - docker build -t reactdallas/reactdallas-org .
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push $DOCKER_PUSH_USER/$DOCKER_PUSH_REPO;
+    fi

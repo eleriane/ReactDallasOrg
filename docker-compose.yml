@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  reactdallas-org:
+    image: reactdallas/reactdallas-org
+    expose:
+      - 80
+    restart: always

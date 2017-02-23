@@ -1,24 +1,26 @@
 package main
 
 import (
-	//"github.com/iris-contrib/middleware/logger"
-	"github.com/iris-contrib/middleware/recovery"
-	"github.com/kataras/iris"
+	"gopkg.in/kataras/iris.v6"
+	//"gopkg.in/kataras/iris.v6/adaptors/view"
+	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 )
 
 func main() {
-
-	// Middleware
-	iris.Use(recovery.New())
-	//iris.Use(logger.New())
+	app := iris.New()
+	app.Adapt(httprouter.New())
 	
-	iris.StaticFS("/s", "./s/", 1)
-	//iris.StaticWeb("/","./static", 1)
-
+	/*
+	templates := view.HTML("./static", ".html")
+    app.Adapt(templates)
+	
 	// Router
-	iris.Get("/", func(ctx *iris.Context) {
-		ctx.ServeFile("./s/index.html", true)
+	app.Get("/", func(ctx *iris.Context) {
+		ctx.Render("index.html", nil)
 	})
+	*/
+	
+	app.StaticWeb("/", "./static/")
 
-	iris.Listen(":80")
+	app.Listen(":80")
 }
